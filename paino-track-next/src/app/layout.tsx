@@ -16,6 +16,10 @@ export const metadata = {
   description: "Seguridad jurídica con transparencia digital en tiempo real",
 };
 
+import { Providers } from "@/components/Providers";
+
+// ... (keep structure)
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,14 +30,16 @@ export default function RootLayout({
       <body
         className={`${jakarta.variable} ${inter.variable} antialiased bg-background text-white selection:bg-primary/30 selection:text-white`}
       >
-        {/* Background Gradient/Mesh */}
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-30" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/20 blur-[120px] rounded-full opacity-30" />
-        </div>
-        <main className="relative z-10">
-          {children}
-        </main>
+        <Providers>
+          {/* Background Gradient/Mesh */}
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-30" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/20 blur-[120px] rounded-full opacity-30" />
+          </div>
+          <main className="relative z-10">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );
