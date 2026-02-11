@@ -1,16 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TrackingSearch from '@/components/TrackingSearch';
 import VisualTracker from '@/components/VisualTracker';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tramite } from '@/lib/db';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [tramite, setTramite] = useState<Tramite | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const handleSearch = async (query: string) => {
     setLoading(true);
