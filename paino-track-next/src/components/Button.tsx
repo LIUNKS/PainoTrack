@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 interface ButtonProps extends HTMLMotionProps<"button"> {
-    variant?: 'primary' | 'secondary' | 'outline';
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
     loading?: boolean;
     children: React.ReactNode;
 }
@@ -16,7 +16,8 @@ export default function Button({ children, onClick, variant = 'primary', classNa
     const variants = {
         primary: "bg-primary text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] border border-primary/50",
         secondary: "bg-white/5 text-white hover:bg-white/10 border border-white/10 backdrop-blur-md",
-        outline: "bg-transparent text-primary border border-primary/30 hover:bg-primary/10"
+        outline: "bg-transparent text-primary border border-primary/30 hover:bg-primary/10",
+        ghost: "bg-transparent text-gray-400 hover:text-white hover:bg-white/5"
     };
 
     return (
