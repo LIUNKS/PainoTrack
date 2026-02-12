@@ -155,18 +155,6 @@ export default function AdminDashboard() {
                         </AnimatePresence>
 
                         <div className={showCreate ? 'lg:col-span-2' : 'lg:col-span-3'}>
-                            {/* Search Bar */}
-                            <div className="mb-4 relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Buscar por cliente, DNI o código..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:border-primary/50 focus:bg-black/30 transition-all font-medium placeholder:text-gray-500"
-                                />
-                            </div>
-
                             <GlassCard className="overflow-hidden !p-0">
                                 {loading ? (
                                     <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary w-8 h-8" /></div>
@@ -183,7 +171,7 @@ export default function AdminDashboard() {
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/5">
-                                                {filteredTramites.map((t) => (
+                                                {tramites.map((t) => (
                                                     <tr key={t.id} className="hover:bg-white/5 transition-all group">
                                                         <td className="py-4 pl-6 font-mono text-primary font-medium">
                                                             {t.code ? (
@@ -229,7 +217,7 @@ export default function AdminDashboard() {
                                         </table>
                                     </div>
                                 )}
-                                {!loading && filteredTramites.length === 0 && (
+                                {!loading && tramites.length === 0 && (
                                     <div className="text-center py-16">
                                         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <Search className="w-8 h-8 text-gray-600" />
