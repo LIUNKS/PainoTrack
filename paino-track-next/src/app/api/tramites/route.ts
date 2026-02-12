@@ -4,8 +4,14 @@ import { TramiteService } from '@/lib/db';
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
+    const dni = searchParams.get('dni');
 
     try {
+        if (dni) {
+            const tramites = await TramiteService.getByDni(dni);
+            return NextResponse.json(tramites);
+        }
+
         if (query) {
             const tramite = await TramiteService.getByCodeOrDni(query);
             if (!tramite) {
