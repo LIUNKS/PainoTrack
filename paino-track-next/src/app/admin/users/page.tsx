@@ -14,6 +14,9 @@ interface UserData {
     id: string;
     email: string;
     role: 'admin' | 'client';
+    displayName?: string;
+    dni?: string;
+    phoneNumber?: string;
     createdAt?: string;
 }
 
@@ -26,6 +29,9 @@ export default function UsersManagementPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<'admin' | 'client'>('client');
+    const [displayName, setDisplayName] = useState('');
+    const [dni, setDni] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [creating, setCreating] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -51,15 +57,25 @@ export default function UsersManagementPage() {
 
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate DNI format
+        if (!/^\d{8}$/.test(dni)) {
+            setMessage({ type: 'error', text: 'El DNI debe tener exactamente 8 números.' });
+            return;
+        }
+
         setCreating(true);
         setMessage(null);
 
-        const result = await createUser(email, password, role);
+        const result = await createUser(email, password, role, displayName, dni, phoneNumber);
 
         if (result.success) {
             setMessage({ type: 'success', text: 'Usuario creado correctamente' });
             setEmail('');
             setPassword('');
+            setDisplayName('');
+            setDni('');
+            setPhoneNumber('');
             setRole('client');
             setShowCreate(false);
             fetchUsers();
@@ -98,6 +114,43 @@ export default function UsersManagementPage() {
                                     <h2 className="text-xl font-bold mb-4">Registrar Nuevo Usuario</h2>
                                     <form onSubmit={handleCreateUser} className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm text-gray-400 mb-1">Nombre Completo</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={displayName}
+                                                    onChange={e => setDisplayName(e.target.value)}
+                                                    className="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 text-white"
+                                                    placeholder="Juan Pérez"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm text-gray-400 mb-1">DNI / Documento</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={dni}
+                                                    onChange={e => {
+                                                        const val = e.target.value.replace(/\D/g, '');
+                                                        if (val.length <= 8) setDni(val);
+                                                    }}
+                                                    className="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 text-white"
+                                                    placeholder="8 dígitos"
+                                                    minLength={8}
+                                                    maxLength={8}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm text-gray-400 mb-1">Teléfono</label>
+                                                <input
+                                                    type="tel"
+                                                    value={phoneNumber}
+                                                    onChange={e => setPhoneNumber(e.target.value)}
+                                                    className="w-full bg-black/30 border border-white/10 rounded-lg px-4 py-2 text-white"
+                                                    placeholder="+51 999 999 999"
+                                                />
+                                            </div>
                                             <div>
                                                 <label className="block text-sm text-gray-400 mb-1">Correo Electrónico</label>
                                                 <input
@@ -157,7 +210,9 @@ export default function UsersManagementPage() {
                             <table className="w-full">
                                 <thead>
                                     <tr className="text-left text-gray-400 border-b border-white/10">
-                                        <th className="pb-4 pl-4">Correo</th>
+                                        <th className="pb-4 pl-4">Usuario</th>
+                                        <th className="pb-4">Datos</th>
+                                        <th className="pb-4">Correo</th>
                                         <th className="pb-4">Rol</th>
                                         <th className="pb-4">UID</th>
                                     </tr>
@@ -165,7 +220,12 @@ export default function UsersManagementPage() {
                                 <tbody className="divide-y divide-white/5">
                                     {users.map((u) => (
                                         <tr key={u.id} className="hover:bg-white/5 transition-colors">
-                                            <td className="py-4 pl-4">{u.email}</td>
+                                            <td className="py-4 pl-4">
+                                                <div className="font-medium text-white">{u.displayName || 'Sin Nombre'}</div>
+                                                <div className="text-xs text-gray-500">{u.dni || 'Sin DNI'}</div>
+                                            </td>
+                                            <td className="py-4 text-sm text-gray-400">{u.phoneNumber || '-'}</td>
+                                            <td className="py-4 text-gray-400">{u.email}</td>
                                             <td className="py-4">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${u.role === 'admin' ? 'bg-primary/20 text-primary' : 'bg-gray-500/20 text-gray-400'}`}>
                                                     {u.role.toUpperCase()}
