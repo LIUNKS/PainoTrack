@@ -8,9 +8,17 @@ import { useRouter } from 'next/navigation';
 
 type UserRole = 'admin' | 'client' | null;
 
+interface UserData {
+    displayName?: string;
+    dni?: string;
+    phoneNumber?: string;
+    role: UserRole;
+}
+
 interface AuthContextType {
     user: User | null;
     role: UserRole;
+    userData: UserData | null;
     loading: boolean;
     logout: () => Promise<void>;
 }
@@ -18,6 +26,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
     user: null,
     role: null,
+    userData: null,
     loading: true,
     logout: async () => { },
 });
@@ -27,6 +36,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [role, setRole] = useState<UserRole>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -39,19 +49,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const userDoc = await getDoc(userDocRef);
 
                     if (userDoc.exists()) {
-                        setRole(userDoc.data().role as UserRole);
+                        const data = userDoc.data();
+                        setRole(data.role as UserRole);
+                        setUserData({
+                            role: data.role as UserRole,
+                            displayName: data.displayName,
+                            dni: data.dni,
+                            phoneNumber: data.phoneNumber
+                        });
                     } else {
                         // Default to client if no document exists
                         setRole('client');
+                        setUserData(null);
                     }
                 } catch (error) {
                     console.error("Error fetching user role:", error);
                     setRole('client');
+                    setUserData(null);
                 }
                 setUser(firebaseUser);
             } else {
                 setUser(null);
                 setRole(null);
+                setUserData(null);
             }
             setLoading(false);
         });
@@ -62,11 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = async () => {
         await signOut(auth);
         setRole(null);
+        setUserData(null);
         router.push('/login');
     };
 
     return (
-        <AuthContext.Provider value={{ user, role, loading, logout }}>
+        <AuthContext.Provider value={{ user, role, userData, loading, logout }}>
             {children}
         </AuthContext.Provider>
     );
