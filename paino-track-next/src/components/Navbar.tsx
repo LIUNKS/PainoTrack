@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ShieldCheck, LogOut, User } from 'lucide-react';
+import { ShieldCheck, LogOut, User, Users, FileText } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import Button from './Button';
 
@@ -20,38 +20,43 @@ export default function Navbar() {
                         PAINO<span className="text-primary">TRACK</span>
                     </span>
                 </Link>
-                <div className="flex gap-6 items-center">
-                    {user ? (
-                        <>
-                            <Link href="/" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                                Buscar
-                            </Link>
-
-                            {/* Only show Admin Panel to Admins */}
-                            {role === 'admin' && (
-                                <Link href="/admin" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                {user ? (
+                    <div className="flex items-center gap-6">
+                        {/* Admin Links */}
+                        {role === 'admin' && (
+                            <>
+                                <Link href="/admin/users" className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                                    <Users className="w-4 h-4" /> <span className="hidden md:inline">Usuarios</span>
+                                </Link>
+                                <Link href="/admin/tramites/new" className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                                    <FileText className="w-4 h-4" /> <span className="hidden md:inline">Nuevo Trámite</span>
+                                </Link>
+                                <Link href="/admin" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-primary/20 px-3 py-1 rounded-full bg-primary/10">
                                     Panel Admin
                                 </Link>
-                            )}
+                            </>
+                        )}
 
-                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
-                                <span className="text-xs text-gray-500 hidden md:block">{user.email}</span>
-                                <Button
-                                    variant="secondary"
-                                    className="!px-3 !py-1.5 !text-xs h-8"
-                                    onClick={() => logout()}
-                                >
-                                    <LogOut className="w-3 h-3" /> Salir
-                                </Button>
-                            </div>
-                        </>
-                    ) : (
-                        // Should not be reachable typically if pages are protected, but kept for login page header
-                        <Link href="/login" className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-lg hover:bg-white/5">
-                            <User className="w-4 h-4" /> Iniciar Sesión
-                        </Link>
-                    )}
-                </div>
+                        {/* Client Link (Implicit via "PainoTrack" logo, but we can add 'Mis Tramites' if needed, though user wanted clean) */}
+                        {/* Keeping it clean for clients as requested "solo quiero ser más directo" */}
+
+                        <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                            <span className="text-xs text-gray-500 hidden md:block">{user.email}</span>
+                            <Button
+                                variant="secondary"
+                                className="!px-3 !py-1.5 !text-xs h-8"
+                                onClick={() => logout()}
+                            >
+                                <LogOut className="w-3 h-3" /> <span className="hidden md:inline">Salir</span>
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    // Should not be reachable typically if pages are protected, but kept for login page header
+                    <Link href="/login" className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-lg hover:bg-white/5">
+                        <User className="w-4 h-4" /> Iniciar Sesión
+                    </Link>
+                )}
             </div>
         </nav>
     );
