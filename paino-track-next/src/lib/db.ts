@@ -76,6 +76,23 @@ export const TramiteService = {
         } as Tramite;
     },
 
+    async getByDni(dni: string): Promise<Tramite[]> {
+        const tramitesRef = collection(db, COLLECTION_NAME);
+        const q = query(tramitesRef, where("dni", "==", dni));
+        const querySnapshot = await getDocs(q);
+
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: formatDate(doc.data().createdAt),
+            updatedAt: formatDate(doc.data().updatedAt),
+            history: (doc.data().history || []).map((h: any) => ({
+                ...h,
+                timestamp: formatDate(h.timestamp)
+            }))
+        })) as Tramite[];
+    },
+
     async create(data: Omit<Tramite, 'id' | 'createdAt' | 'updatedAt' | 'history' | 'code'>): Promise<Tramite> {
         const code = `PN-${Math.floor(100000 + Math.random() * 900000)}`;
         const newTramite = {
