@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp, deleteApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, query, where, getDocs, collection } from "firebase/firestore";
 import { db } from "./firebase"; // Use main app's Firestore for writing data
 
 // Re-use the existing config
@@ -13,7 +13,7 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-export const createUser = async (email: string, password: string, role: 'admin' | 'client') => {
+export const createUser = async (email: string, password: string, role: 'admin' | 'client', displayName?: string, dni?: string, phoneNumber?: string) => {
     // 1. Initialize a secondary app to avoid logging out the current user
     const SECONDARY_APP_NAME = 'SECONDARY_APP_FOR_USER_CREATION';
     let secondaryApp;
@@ -27,6 +27,15 @@ export const createUser = async (email: string, password: string, role: 'admin' 
     const secondaryAuth = getAuth(secondaryApp);
 
     try {
+        // 1. Check if DNI already exists
+        if (dni) {
+            const q = query(collection(db, 'users'), where('dni', '==', dni));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                return { success: false, error: 'El DNI ya está registrado en el sistema.' };
+            }
+        }
+
         // 2. Create user in Auth
         const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
         const user = userCredential.user;
@@ -36,6 +45,9 @@ export const createUser = async (email: string, password: string, role: 'admin' 
         await setDoc(doc(db, 'users', user.uid), {
             email,
             role,
+            displayName: displayName || '',
+            dni: dni || '',
+            phoneNumber: phoneNumber || '',
             createdAt: new Date().toISOString()
         });
 
