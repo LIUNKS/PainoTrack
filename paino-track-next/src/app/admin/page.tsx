@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import StatusManager from '@/components/StatusManager';
 import CreateTramiteForm from '@/components/CreateTramiteForm';
 import GlassCard from '@/components/GlassCard';
 import Button from '@/components/Button';
@@ -192,23 +193,10 @@ export default function AdminDashboard() {
                                                         <td className="py-4"><StatusBadge status={t.status} /></td>
                                                         <td className="py-4">
                                                             <div className="flex gap-2">
-                                                                {STATUS_OPTIONS.indexOf(t.status) < STATUS_OPTIONS.length - 1 ? (
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        className="px-3 py-1 text-xs h-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                        loading={updating === t.id}
-                                                                        onClick={() => {
-                                                                            const nextIdx = STATUS_OPTIONS.indexOf(t.status) + 1;
-                                                                            updateStatus(t.id, STATUS_OPTIONS[nextIdx]);
-                                                                        }}
-                                                                    >
-                                                                        Avanzar <RefreshCw className="w-3 h-3 ml-1" />
-                                                                    </Button>
-                                                                ) : (
-                                                                    <span className="text-xs text-green-500 flex items-center opacity-60">
-                                                                        <CheckCircle2 className="w-3 h-3 mr-1" /> Completo
-                                                                    </span>
-                                                                )}
+                                                                <StatusManager
+                                                                    tramite={t}
+                                                                    onUpdate={fetchTramites}
+                                                                />
                                                             </div>
                                                         </td>
                                                     </tr>
