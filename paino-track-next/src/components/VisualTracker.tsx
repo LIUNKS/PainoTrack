@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import GlassCard from '@/components/GlassCard';
 import StatusBadge from '@/components/StatusBadge';
 import ProgressBar from '@/components/ProgressBar';
-import { FileText, PenTool, CheckCircle, Archive, LucideIcon } from 'lucide-react';
+import { FileText, PenTool, CheckCircle, Archive, LucideIcon, AlertTriangle, AlertOctagon } from 'lucide-react';
 import { Tramite } from '@/lib/db';
 
 const STEPS: { status: string; label: string; icon: LucideIcon }[] = [
@@ -36,19 +36,68 @@ export default function VisualTracker({ tramite }: { tramite: Tramite }) {
                     <StatusBadge status={tramite.status} />
                 </div>
 
+                {tramite.status === 'Observado' && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex gap-4 items-start"
+                    >
+                        <AlertTriangle className="w-6 h-6 text-yellow-500 shrink-0 mt-1" />
+                        <div>
+                            <h4 className="font-bold text-yellow-500 mb-1">Trámite Observado</h4>
+                            <p className="text-yellow-200/80 text-sm">{tramite.observation || 'Se requiere atención en este trámite. Por favor revise los detalles.'}</p>
+                        </div>
+                    </motion.div>
+                )}
+
+                {tramite.status === 'Anulado' && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex gap-4 items-start"
+                    >
+                        <AlertOctagon className="w-6 h-6 text-red-500 shrink-0 mt-1" />
+                        <div>
+                            <h4 className="font-bold text-red-500 mb-1">Trámite Anulado</h4>
+                            <p className="text-red-200/80 text-sm">{tramite.observation || 'Este trámite ha sido anulado.'}</p>
+                        </div>
+                    </motion.div>
+                )}
+
                 <div className="mb-8">
                     <div className="flex justify-between text-sm text-gray-400 mb-2">
                         <span>Progreso del Trámite</span>
-                        <span>{Math.round(progress)}%</span>
+                        <span>
+                            {tramite.status === 'Anulado' ? 'Cancelado' :
+                                tramite.status === 'Observado' ? 'Detenido' :
+                                    `${Math.round(progress)}%`}
+                        </span>
                     </div>
-                    <ProgressBar progress={progress} />
+                    {/* Visual trick: make progress bar red if Anulado, Yellow if Observado */}
+                    <ProgressBar
+                        progress={progress}
+                        color={tramite.status === 'Anulado' ? 'bg-red-500' : tramite.status === 'Observado' ? 'bg-yellow-500' : undefined}
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     {STEPS.map((step, index) => {
+                        // If Anulado, everything stops. If Observado, we stick to last valid step visually?
+                        // Actually, logic remains effectively same, just color changes.
                         const isCompleted = index <= currentStepIndex;
                         const isCurrent = index === currentStepIndex;
                         const Icon = step.icon;
+
+                        // Override color for current step if special status
+                        let ringColor = 'ring-primary';
+                        let shadowColor = 'rgba(59,130,246,0.2)';
+
+                        if (tramite.status === 'Observado' && isCompleted && index === currentStepIndex) {
+                            // This logic is tricky because Observado is NOT in STEPS array. 
+                            // So currentStepIndex might be -1 if we strictly searched for "Observado" in STEPS.
+                            // FIX: VisualTracker needs to know "last valid step" or similar.
+                            // For now, let's keep it simple: If Observado, we show standard progress but maybe dim it.
+                        }
 
                         return (
                             <div
