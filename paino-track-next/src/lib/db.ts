@@ -11,7 +11,7 @@ import {
     Timestamp
 } from 'firebase/firestore';
 
-export type TramiteStatus = 'Recibido' | 'En Redacción' | 'Pendiente de Firma' | 'En Registros' | 'Finalizado';
+export type TramiteStatus = 'Recibido' | 'En Redacción' | 'Pendiente de Firma' | 'En Registros' | 'Finalizado' | 'Observado' | 'Anulado';
 
 export interface Tramite {
     id: string; // Firestore Doc ID or Custom ID
@@ -20,9 +20,10 @@ export interface Tramite {
     clientName: string;
     type: string;
     status: TramiteStatus;
+    observation?: string; // Reason for Observado/Anulado
     createdAt: string;
     updatedAt: string;
-    history: { status: TramiteStatus; timestamp: string }[];
+    history: { status: TramiteStatus; timestamp: string; observation?: string }[];
 }
 
 const COLLECTION_NAME = 'tramites';
@@ -114,7 +115,7 @@ export const TramiteService = {
         } as Tramite;
     },
 
-    async updateStatus(id: string, status: TramiteStatus): Promise<void> {
+    async updateStatus(id: string, status: TramiteStatus, observation?: string): Promise<void> {
         const docRef = doc(db, COLLECTION_NAME, id);
         const docSnap = await getDoc(docRef);
 
@@ -122,10 +123,27 @@ export const TramiteService = {
 
         const currentHistory = docSnap.data().history || [];
 
-        await updateDoc(docRef, {
+        const updateData: any = {
             status,
             updatedAt: Timestamp.now(),
-            history: [...currentHistory, { status, timestamp: Timestamp.now() }]
-        });
+            history: [...currentHistory, {
+                status,
+                timestamp: Timestamp.now(),
+                ...(observation ? { observation } : {})
+            }]
+        };
+
+        // If observation provided, save it to root as well for easier access
+        if (observation !== undefined) {
+            updateData.observation = observation;
+        } else if (status !== 'Observado' && status !== 'Anulado') {
+            // Clear observation if moving to a Normal state, or keep it?
+            // "es importante mencionar que el tramite puede estar observado y anulado en cualquier punto... pero si es el ciclo normal del tramite simplemente avanza"
+            // Implies if we move back to normal, we might want to clear the active observation flag or keep it in history.
+            // Let's clear the root observation field so it doesn't persist as a warning when the issue is resolved.
+            updateData.observation = null;
+        }
+
+        await updateDoc(docRef, updateData);
     }
 };
