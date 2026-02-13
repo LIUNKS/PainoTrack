@@ -9,12 +9,13 @@ export async function PATCH(
     const { id } = await params;
     try {
         const body = await request.json();
+        const { status, observation } = body;
 
-        if (!body.status) {
+        if (!status) {
             return NextResponse.json({ error: 'Estado requerido' }, { status: 400 });
         }
 
-        await TramiteService.updateStatus(id, body.status as TramiteStatus);
+        await TramiteService.updateStatus(id, status as TramiteStatus, observation);
 
         return NextResponse.json({ success: true });
     } catch (error) {
