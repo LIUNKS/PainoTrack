@@ -89,7 +89,7 @@ export default function UsersManagementPage() {
         <>
             <Navbar />
             <div className="min-h-screen pt-24 px-6 pb-12">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <div className="flex justify-between items-center mb-8">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
