@@ -43,7 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // Fetch user role from Firestore
                 try {
                     const userDocRef = doc(db, 'users', firebaseUser.uid);
                     const userDoc = await getDoc(userDocRef);
@@ -58,7 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             phoneNumber: data.phoneNumber
                         });
                     } else {
-                        // Default to client if no document exists
                         setRole('client');
                         setUserData(null);
                     }
