@@ -14,7 +14,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             if (!user) {
                 router.push('/login');
             } else if (user && role !== 'admin') {
-                // If logged in but not admin, redirect to home
                 router.push('/');
             }
         }
@@ -29,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     if (!user) {
-        return null; // Will redirect via useEffect
+        return null;
     }
 
     return <>{children}</>;
