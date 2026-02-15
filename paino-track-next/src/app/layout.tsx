@@ -18,7 +18,6 @@ export const metadata = {
 
 import { Providers } from "@/components/Providers";
 
-// ... (keep structure)
 
 export default function RootLayout({
   children,
@@ -31,7 +30,6 @@ export default function RootLayout({
         className={`${jakarta.variable} ${inter.variable} antialiased bg-background text-white selection:bg-primary/30 selection:text-white`}
       >
         <Providers>
-          {/* Background Gradient/Mesh */}
           <div className="fixed inset-0 z-0 pointer-events-none">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-30" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/20 blur-[120px] rounded-full opacity-30" />
