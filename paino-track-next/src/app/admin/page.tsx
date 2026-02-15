@@ -57,7 +57,6 @@ export default function AdminDashboard() {
         }
     };
 
-    // Derived State for Stats and Filtering
     const filteredTramites = tramites.filter(t =>
         t.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.dni.includes(searchTerm) ||
@@ -77,7 +76,6 @@ export default function AdminDashboard() {
             <div className="min-h-screen pt-24 px-6 pb-12 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/10 via-background to-background">
                 <div className="max-w-7xl mx-auto space-y-8">
 
-                    {/* Hero Section */}
                     <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
                         <div>
                             <h1 className="text-4xl font-display font-bold text-white tracking-tight">
@@ -95,7 +93,6 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    {/* Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <GlassCard className="!p-4 flex items-center gap-4 border-l-4 border-l-blue-500">
                             <div className="p-3 bg-blue-500/10 rounded-lg text-blue-400">
