@@ -22,7 +22,6 @@ export default function Navbar() {
                 </Link>
                 {user ? (
                     <div className="flex items-center gap-6">
-                        {/* Admin Links */}
                         {role === 'admin' && (
                             <>
                                 <Link href="/admin/users" className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
@@ -37,9 +36,6 @@ export default function Navbar() {
                             </>
                         )}
 
-                        {/* Client Link (Implicit via "PainoTrack" logo, but we can add 'Mis Tramites' if needed, though user wanted clean) */}
-                        {/* Keeping it clean for clients as requested "solo quiero ser más directo" */}
-
                         <div className="flex items-center gap-4 pl-4 border-l border-white/10">
                             <span className="text-xs text-gray-500 hidden md:block">{user.email}</span>
                             <Button
@@ -52,7 +48,6 @@ export default function Navbar() {
                         </div>
                     </div>
                 ) : (
-                    // Should not be reachable typically if pages are protected, but kept for login page header
                     <Link href="/login" className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-lg hover:bg-white/5">
                         <User className="w-4 h-4" /> Iniciar Sesión
                     </Link>
