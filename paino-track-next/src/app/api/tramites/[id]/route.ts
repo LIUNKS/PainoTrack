@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import { TramiteService } from '@/lib/db';
-import { TramiteStatus } from '@/lib/db';
+import { TramiteService, TramiteStatus } from '@/lib/db';
+import { db } from '@/lib/firebase';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+
+const WEBHOOK_URL = 'https://jgcamiloaga.app.n8n.cloud/webhook/18168330-d16a-4b0d-9ab7-9302424194de';
 
 export async function PATCH(
     request: Request,
@@ -17,7 +20,37 @@ export async function PATCH(
 
         await TramiteService.updateStatus(id, status as TramiteStatus, observation);
 
-        return NextResponse.json({ success: true });
+        let clientData = null;
+        try {
+            const tramiteDoc = await getDoc(doc(db, 'tramites', id));
+
+            if (tramiteDoc.exists()) {
+                const tramiteData = tramiteDoc.data();
+                let phoneNumber = '';
+
+                if (tramiteData.dni) {
+                    const usersRef = collection(db, 'users');
+                    const q = query(usersRef, where('dni', '==', tramiteData.dni));
+                    const userSnap = await getDocs(q);
+
+                    if (!userSnap.empty) {
+                        const userData = userSnap.docs[0].data();
+                        phoneNumber = userData.phoneNumber || '';
+                    }
+                }
+
+                clientData = {
+                    name: tramiteData.clientName,
+                    phone: phoneNumber,
+                    code: tramiteData.code,
+                    type: tramiteData.type
+                };
+            }
+        } catch (error) {
+            console.error('Error fetching client data:', error);
+        }
+
+        return NextResponse.json({ success: true, clientData });
     } catch (error) {
         console.error("Update Error:", error);
         return NextResponse.json({ error: 'Error al actualizar' }, { status: 500 });
