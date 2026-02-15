@@ -14,13 +14,13 @@ import {
 export type TramiteStatus = 'Recibido' | 'En Redacción' | 'Pendiente de Firma' | 'En Registros' | 'Finalizado' | 'Observado' | 'Anulado';
 
 export interface Tramite {
-    id: string; // Firestore Doc ID or Custom ID
-    code?: string; // Visual tracking code (PN-XXXXXX)
+    id: string;
+    code?: string;
     dni: string;
     clientName: string;
     type: string;
     status: TramiteStatus;
-    observation?: string; // Reason for Observado/Anulado
+    observation?: string;
     createdAt: string;
     updatedAt: string;
     history: { status: TramiteStatus; timestamp: string; observation?: string }[];
@@ -28,7 +28,6 @@ export interface Tramite {
 
 const COLLECTION_NAME = 'tramites';
 
-// Convert Firestore timestamp to ISO string for frontend
 const formatDate = (date: any) => {
     if (date?.toDate) return date.toDate().toISOString();
     return new Date().toISOString();
@@ -52,12 +51,10 @@ export const TramiteService = {
     async getByCodeOrDni(search: string): Promise<Tramite | null> {
         const tramitesRef = collection(db, COLLECTION_NAME);
 
-        // Try searching by DNI
         let q = query(tramitesRef, where("dni", "==", search));
         let querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-            // Try searching by Code (PN-XXXXXX)
             q = query(tramitesRef, where("code", "==", search));
             querySnapshot = await getDocs(q);
         }
@@ -133,14 +130,9 @@ export const TramiteService = {
             }]
         };
 
-        // If observation provided, save it to root as well for easier access
         if (observation !== undefined) {
             updateData.observation = observation;
         } else if (status !== 'Observado' && status !== 'Anulado') {
-            // Clear observation if moving to a Normal state, or keep it?
-            // "es importante mencionar que el tramite puede estar observado y anulado en cualquier punto... pero si es el ciclo normal del tramite simplemente avanza"
-            // Implies if we move back to normal, we might want to clear the active observation flag or keep it in history.
-            // Let's clear the root observation field so it doesn't persist as a warning when the issue is resolved.
             updateData.observation = null;
         }
 
