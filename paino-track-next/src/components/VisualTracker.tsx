@@ -73,7 +73,6 @@ export default function VisualTracker({ tramite }: { tramite: Tramite }) {
                                     `${Math.round(progress)}%`}
                         </span>
                     </div>
-                    {/* Visual trick: make progress bar red if Anulado, Yellow if Observado */}
                     <ProgressBar
                         progress={progress}
                         color={tramite.status === 'Anulado' ? 'bg-red-500' : tramite.status === 'Observado' ? 'bg-yellow-500' : undefined}
@@ -82,21 +81,14 @@ export default function VisualTracker({ tramite }: { tramite: Tramite }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     {STEPS.map((step, index) => {
-                        // If Anulado, everything stops. If Observado, we stick to last valid step visually?
-                        // Actually, logic remains effectively same, just color changes.
                         const isCompleted = index <= currentStepIndex;
                         const isCurrent = index === currentStepIndex;
                         const Icon = step.icon;
 
-                        // Override color for current step if special status
                         let ringColor = 'ring-primary';
                         let shadowColor = 'rgba(59,130,246,0.2)';
 
                         if (tramite.status === 'Observado' && isCompleted && index === currentStepIndex) {
-                            // This logic is tricky because Observado is NOT in STEPS array. 
-                            // So currentStepIndex might be -1 if we strictly searched for "Observado" in STEPS.
-                            // FIX: VisualTracker needs to know "last valid step" or similar.
-                            // For now, let's keep it simple: If Observado, we show standard progress but maybe dim it.
                         }
 
                         return (
