@@ -25,7 +25,6 @@ export default function LoginPage() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Smart Redirect based on Role
             const { doc, getDoc } = await import('firebase/firestore');
             const { db } = await import('@/lib/firebase');
 
