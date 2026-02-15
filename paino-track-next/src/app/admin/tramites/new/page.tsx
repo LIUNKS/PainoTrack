@@ -20,7 +20,7 @@ export default function NewTramitePage() {
     }, [user, role, loading, router]);
 
     if (loading || !user || role !== 'admin') {
-        return null; // Or a loading spinner
+        return null;
     }
 
     return (
