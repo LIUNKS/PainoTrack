@@ -1,6 +1,6 @@
-import { initializeApp, getApps, getApp, deleteApp } from "firebase/app";
+import { initializeApp, getApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, query, where, getDocs, collection } from "firebase/firestore";
+import { doc, setDoc, query, where, getDocs, collection } from "firebase/firestore";
 import { db } from "./firebase";
 
 const firebaseConfig = {
@@ -49,8 +49,9 @@ export const createUser = async (email: string, password: string, role: 'admin' 
 
         return { success: true, uid: user.uid };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error creating user:", error);
-        return { success: false, error: error.message };
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        return { success: false, error: errorMessage };
     }
 };
