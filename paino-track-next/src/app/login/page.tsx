@@ -36,7 +36,7 @@ export default function LoginPage() {
             } else {
                 router.push('/');
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
             setError('Credenciales incorrectas. Intenta nuevamente.');
         } finally {
