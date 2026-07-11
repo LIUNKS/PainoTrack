@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${jakarta.variable} ${inter.variable} antialiased bg-background text-white selection:bg-primary/30 selection:text-white`}
       >
