@@ -8,20 +8,16 @@ import GlassCard from '@/components/GlassCard';
 import Button from '@/components/Button';
 import StatusBadge from '@/components/StatusBadge';
 import Navbar from '@/components/Navbar';
-import { Plus, RefreshCw, Loader2, Users, Search, FileText, CheckCircle2, Clock, Filter } from 'lucide-react';
+import { Plus, Loader2, Users, Search, FileText, CheckCircle2, Clock, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tramite, TramiteStatus } from '@/lib/db';
+import { Tramite } from '@/lib/db';
 import { useAuth } from '@/context/AuthContext';
-
-const STATUS_OPTIONS: TramiteStatus[] = ['Recibido', 'En Redacción', 'Pendiente de Firma', 'En Registros', 'Finalizado'];
 
 export default function AdminDashboard() {
     const { user } = useAuth();
     const [tramites, setTramites] = useState<Tramite[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
-    const [updating, setUpdating] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchTramites = async () => {
         try {
@@ -38,30 +34,6 @@ export default function AdminDashboard() {
     useEffect(() => {
         fetchTramites();
     }, []);
-
-    const updateStatus = async (id: string, newStatus: TramiteStatus) => {
-        setUpdating(id);
-        try {
-            const res = await fetch(`/api/tramites/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus })
-            });
-            if (res.ok) {
-                fetchTramites();
-            }
-        } catch (error) {
-            console.error('Failed to update status', error);
-        } finally {
-            setUpdating(null);
-        }
-    };
-
-    const filteredTramites = tramites.filter(t =>
-        t.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.dni.includes(searchTerm) ||
-        (t.code && t.code.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
 
     const stats = {
         total: tramites.length,
