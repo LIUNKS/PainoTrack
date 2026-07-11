@@ -3,6 +3,7 @@ import { TramiteService, TramiteStatus } from '@/lib/db';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const WEBHOOK_URL = 'https://jgcamiloaga.app.n8n.cloud/webhook/18168330-d16a-4b0d-9ab7-9302424194de';
 
 export async function PATCH(
