@@ -86,16 +86,22 @@ export default function VisualTracker({ tramite }: { tramite: Tramite }) {
                         const Icon = step.icon;
 
                         let ringColor = 'ring-primary';
-                        let shadowColor = 'rgba(59,130,246,0.2)';
+                        let shadowColor = 'shadow-[0_0_20px_rgba(59,130,246,0.2)]';
 
-                        if (tramite.status === 'Observado' && isCompleted && index === currentStepIndex) {
+                        if (tramite.status === 'Observado' && isCurrent) {
+                            ringColor = 'ring-yellow-500';
+                            shadowColor = 'shadow-[0_0_20px_rgba(234,179,8,0.2)]';
+                        } else if (tramite.status === 'Anulado' && isCurrent) {
+                            ringColor = 'ring-red-500';
+                            shadowColor = 'shadow-[0_0_20px_rgba(239,68,68,0.2)]';
                         }
 
                         return (
                             <div
                                 key={step.label}
-                                className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all duration-500 ${isCompleted ? 'bg-white/5 border border-primary/30' : 'opacity-40 border border-transparent'
-                                    } ${isCurrent ? 'ring-2 ring-primary shadow-[0_0_20px_rgba(59,130,246,0.2)]' : ''}`}
+                                className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all duration-500 ${
+                                    isCompleted ? 'bg-white/5 border border-primary/30' : 'opacity-40 border border-transparent'
+                                } ${isCurrent ? `ring-2 ${ringColor} ${shadowColor}` : ''}`}
                             >
                                 <div className={`p-3 rounded-full mb-3 ${isCompleted ? 'bg-primary/20 text-primary' : 'bg-white/5 text-gray-500'}`}>
                                     <Icon className="w-6 h-6" />
