@@ -28,6 +28,7 @@ export interface Tramite {
 
 const COLLECTION_NAME = 'tramites';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formatDate = (date: any) => {
     if (date?.toDate) return date.toDate().toISOString();
     return new Date().toISOString();
@@ -41,6 +42,7 @@ export const TramiteService = {
             ...doc.data(),
             createdAt: formatDate(doc.data().createdAt),
             updatedAt: formatDate(doc.data().updatedAt),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             history: (doc.data().history || []).map((h: any) => ({
                 ...h,
                 timestamp: formatDate(h.timestamp)
@@ -67,6 +69,7 @@ export const TramiteService = {
             ...doc.data(),
             createdAt: formatDate(doc.data().createdAt),
             updatedAt: formatDate(doc.data().updatedAt),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             history: (doc.data().history || []).map((h: any) => ({
                 ...h,
                 timestamp: formatDate(h.timestamp)
@@ -84,6 +87,7 @@ export const TramiteService = {
             ...doc.data(),
             createdAt: formatDate(doc.data().createdAt),
             updatedAt: formatDate(doc.data().updatedAt),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             history: (doc.data().history || []).map((h: any) => ({
                 ...h,
                 timestamp: formatDate(h.timestamp)
@@ -120,6 +124,7 @@ export const TramiteService = {
 
         const currentHistory = docSnap.data().history || [];
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateData: any = {
             status,
             updatedAt: Timestamp.now(),
